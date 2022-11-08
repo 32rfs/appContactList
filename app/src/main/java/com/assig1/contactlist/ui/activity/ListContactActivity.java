@@ -1,3 +1,9 @@
+/* Rafael de Souza Ferreira - 3041373
+   Assignment 1 - Mobile Development
+   Griffith College Cork
+   4 Year - BSc Computer Science
+ */
+
 package com.assig1.contactlist.ui.activity;
 
 import android.content.Intent;
@@ -24,17 +30,29 @@ import com.assig1.contactlist.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/*
+This class will encapsulate the methods for the "Activity_main.XML"
+Create to show a view with a List of contacts, having a onClick menu after a
+long click, calling a second screen for a click in one of the items, and
+methods for an Add Button that creates a new contact through the a form
+ */
 public class ListContactActivity extends AppCompatActivity {
+//  constant String to use through the conde
     public static final String CONTACT_KEY = "contact";
+    public static final String TITLE_BAR = "Contact List";
+//  Handlers
     private final Contact_DAO dao = new Contact_DAO();
-    private ArrayAdapter<Contact> adapter;
+    private ContactListAdapter adapter;
 
+    /*
+    Create the view, setting a title and functions and auto creating a few
+    contacts for best visualization of tests
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("Contact List");
+        setTitle(TITLE_BAR);
 
         configButtonNewContact();
         configContactList();
@@ -44,12 +62,15 @@ public class ListContactActivity extends AppCompatActivity {
 
     }
 
+//  This will create the menu for when giving a long click in one of the contacts
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo mi){
+        super.onCreateContextMenu(menu, v, mi);
         getMenuInflater().inflate(R.menu.activity_contact_list_menu, menu);
     }
 
+//  The Context Menu will only have an action for now that is remove, when
+//   clicking that it will be called the remove button and item will be removed
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         int itemID = item.getItemId();
@@ -62,8 +83,11 @@ public class ListContactActivity extends AppCompatActivity {
         return super.onContextItemSelected(item);
     }
 
+//  Configuring the floating button that is used to add a new form, for that it's
+//  called other activity
     private void configButtonNewContact() {
-        FloatingActionButton button_new_contact = findViewById(R.id.main_addContact_button);
+        FloatingActionButton button_new_contact =
+                findViewById(R.id.main_addContact_button);
         button_new_contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,92 +96,74 @@ public class ListContactActivity extends AppCompatActivity {
         });
     }
 
+//  Method that open the FormContactActivity using the intent
     private void openFormModeNewContact() {
-        startActivity(new Intent(ListContactActivity.this, FormContactActivity.class));
+        startActivity(new Intent(
+                ListContactActivity.this, FormContactActivity.class));
     }
 
-
+// When other activity is finished the onResume will update the info in the screen
     @Override
     protected void onResume() {
         super.onResume();
         updateContactList();
     }
 
+//  Update all the info in our contact list, with the users removed/edited/created
     private void updateContactList() {
-        adapter.clear();
-        adapter.addAll(dao.allList());
+        this.adapter.clear();
+        this.adapter.addAll(dao.allList());
+        adapter.notifyDataSetChanged();
     }
 
+//  Configure the actions that you can do interacting with the ListView
     private void configContactList() {
         ListView lstContacts = findViewById(R.id.main_listContacts_listView);
         configAdapter(lstContacts);
         configClickOnListItem(lstContacts);
-//        configLongClickToRemoveItem(lstContacts);
         registerForContextMenu(lstContacts);
     }
 
-//    private void configLongClickToRemoveItem(ListView lstContacts) {
-//        lstContacts.setOnItemLongClickListener((adapterView, view, position, id) ->   {
-//                Contact contactChosen = (Contact) adapterView.getItemAtPosition(position);
-//                remove(contactChosen);
-//                return true;
-//            });
-//    }
 
+//  Method for removing one item of the ListView
     private void remove(Contact contactChosen) {
         dao.remove(contactChosen);
         adapter.remove(contactChosen);
+        updateContactList();
         Toasting("Contact Removed");
     }
 
+//  Method for editing on item in the List, after a right click with mouse
     private void configClickOnListItem(ListView lstContacts) {
         lstContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view,
+                                    int position, long l) {
                 Contact contactChosen = (Contact) adapterView.getItemAtPosition(position);
                 openFormModeEditionContact(contactChosen);
             }
         });
     }
 
+//  Start the FormContactActivity and send the contact to be edited as an extra
+//  in the intent
     private void openFormModeEditionContact(Contact contact) {
-        Intent openFormContactActiviy = new Intent(ListContactActivity.this,FormContactActivity.class);
+        Intent openFormContactActiviy = new Intent(
+                ListContactActivity.this,FormContactActivity.class);
         openFormContactActiviy.putExtra(CONTACT_KEY, contact);
         startActivity(openFormContactActiviy);
     }
 
+//  Creates the adapter handle
     private void configAdapter(ListView lstContacts) {
-        adapter = new ArrayAdapter<>(
-                this,
-                R.layout.item_contact);
-        lstContacts.setAdapter(new BaseAdapter() {
-            private final List<Contact> contacts = new ArrayList<>();
-            @Override
-            public int getCount() {
-                return contacts.size();
-            }
-
-            @Override
-            public Contact getItem(int position) {
-                return contacts.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return contacts.get(position).getID();
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                View viewCreated = LayoutInflater
-                        .from(ListContactActivity.this)
-                        .inflate(R.layout.item_contact, viewGroup);
-                return viewCreated;
-            }
-        });
+        adapter = new ContactListAdapter(this);
+        lstContacts.setAdapter(adapter);
     }
 
+/* The toasting method just show a message to the user in the screen, can be used
+to say the action was made with successful you can edit the message when calling*/
     private void Toasting(String txt){
-        Toast.makeText(ListContactActivity.this, txt, Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                ListContactActivity.this, txt, Toast.LENGTH_SHORT).show();
     }
 }
