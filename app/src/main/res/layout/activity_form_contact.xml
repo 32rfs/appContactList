@@ -12,28 +12,31 @@
         <EditText android:id="@+id/activity_form_contact_name"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
-            android:hint="Nome"
+            android:hint="@string/name"
             android:inputType="textCapWords"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:autofillHints="" />
 
         <EditText android:id="@+id/activity_form_contact_tel_number"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
-            android:hint="Telephone Number"
+            android:hint="@string/telephone_number"
             android:inputType="phone"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:autofillHints="" />
 
         <EditText android:id="@+id/activity_form_contact_email"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
-            android:hint="E-mail Address"
+            android:hint="@string/e_mail_address"
             android:inputType="textEmailAddress"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:autofillHints="" />
 
         <Button android:id="@+id/activity_form_contact_save_button"
             android:layout_width="match_parent"
             android:layout_margin="8dp"
-            android:text="SAVE"
+            android:text="@string/save"
             android:layout_height="wrap_content" />
 
     </LinearLayout>

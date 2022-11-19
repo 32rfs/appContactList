@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 
 /*
-A class that will have the informations necessary to create and handle a
+A class that will have the information's necessary to create and handle a
 Contact for our contact list
  */
 public class Contact implements Serializable {
@@ -20,7 +20,7 @@ public class Contact implements Serializable {
     private int ID = 0;
 
     /*
-    The conctat with have tree atributtes that need to be set at creation
+    The contact with have tree attributes that need to be set at creation
     but can be changed after creation
      */
     public Contact(String name, String phone, String email) {
@@ -72,7 +72,7 @@ public class Contact implements Serializable {
         return name;
     }
 
-    public boolean contacHasValidID() {
+    public boolean contactHasValidID() {
         return ID > 0;
     }
 }

@@ -24,7 +24,7 @@ better handle the ListView and ContextMenu
  */
 public class ContactListAdapter extends BaseAdapter {
     private final List<Contact> contacts = new ArrayList<>();
-    private Context context;
+    private final Context context;
 
 //  Creates the context handler to be used in other classes
     public ContactListAdapter(Context context) {
@@ -50,29 +50,40 @@ public class ContactListAdapter extends BaseAdapter {
     }
 
 /* Create the List View with more than just one information, help create the view
-    with a subitem information that usues the layout item_contact.xml */
+    with a subitem information that uses the layout item_contact.xml */
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-        View viewCreated = LayoutInflater
-                .from(context)
-                .inflate(R.layout.item_contact, viewGroup, false);
+        View viewCreated = getInflate(viewGroup);
+
         TextView name = viewCreated.findViewById(R.id.item_contact_name);
         TextView phone = viewCreated.findViewById(R.id.item_contact_telnumber);
         Contact contact = contacts.get(position);
+
         name.setText(contact.getName());
         phone.setText(contact.getPhone());
         return viewCreated;
     }
 
-//  Clear the list
-    public void clear() {
+    private View getInflate(ViewGroup viewGroup) {
+        return LayoutInflater
+                .from(context)
+                .inflate(R.layout.item_contact, viewGroup, false);
+    }
+
+    //  Clear the list
+    private void clear() {
         contacts.clear();
     }
 
 //  Add a new list to this class list, used when starting the view to get the info
 //  that is we have in the memory
-    public void addAll(List<Contact> list) {
+    private void addAll(List<Contact> list) {
         contacts.addAll(list);
+    }
+
+    public void update(List<Contact> list){
+        this.contacts.clear();
+        this.contacts.addAll(list);
     }
 
 //  remove one item in the contact list

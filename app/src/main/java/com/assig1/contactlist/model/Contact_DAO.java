@@ -12,7 +12,7 @@ import java.util.List;
 
 /*
 The DAO class is a designer pattern called Data Access Object is a class
-that helps us encapsulate the object and here is working as provisory database
+that helps us encapsulate the object and here is working as proviso database
  */
 
 public class Contact_DAO {
@@ -36,8 +36,8 @@ public class Contact_DAO {
         IDs_counter++;
     }
 
-//  This metod can be called in the first screen we look to see if the contacts
-//  and then open the informations of that contact in the second screen.
+//  This method can be called in the first screen we look to see if the contacts
+//  and then open the information's of that contact in the second screen.
     public void edit(Contact contact){
         Contact contact_found = searchContactUsingID(contact);
         if(contact_found != null) {

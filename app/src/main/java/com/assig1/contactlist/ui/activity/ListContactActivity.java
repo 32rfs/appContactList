@@ -6,29 +6,22 @@
 
 package com.assig1.contactlist.ui.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.assig1.contactlist.R;
 import com.assig1.contactlist.model.Contact;
 import com.assig1.contactlist.model.Contact_DAO;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.assig1.contactlist.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /*
 This class will encapsulate the methods for the "Activity_main.XML"
@@ -53,12 +46,8 @@ public class ListContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(TITLE_BAR);
-
         configButtonNewContact();
         configContactList();
-
-        dao.save(new Contact("Alex", "1122223333", "alex@alura.com.br"));
-        dao.save(new Contact("Fran", "11224523333", "fran@gmail.com"));
 
     }
 
@@ -72,28 +61,36 @@ public class ListContactActivity extends AppCompatActivity {
 //  The Context Menu will only have an action for now that is remove, when
 //   clicking that it will be called the remove button and item will be removed
     @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
+    public boolean onContextItemSelected(MenuItem item) {
         int itemID = item.getItemId();
         if(itemID == R.id.activity_contact_list_menu_remover){
-            AdapterView.AdapterContextMenuInfo menuInfo =
-                    (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            Contact contactChosen = adapter.getItem(menuInfo.position);
-            remove(contactChosen);
+            deletingConfirmation(item);
         }
         return super.onContextItemSelected(item);
     }
 
-//  Configuring the floating button that is used to add a new form, for that it's
+    private void deletingConfirmation(final MenuItem item) {
+        new AlertDialog.Builder(this)
+                .setTitle("DELETE")
+                .setMessage("Remove the contact ?")
+                .setPositiveButton("YES", (dialogInterface, i) -> deleteAction(item))
+                .setNegativeButton("NO", null)
+                .show();
+    }
+
+    private void deleteAction(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo =
+                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Contact contactChosen = adapter.getItem(menuInfo.position);
+        remove(contactChosen);
+    }
+
+    //  Configuring the floating button that is used to add a new form, for that it's
 //  called other activity
     private void configButtonNewContact() {
         FloatingActionButton button_new_contact =
                 findViewById(R.id.main_addContact_button);
-        button_new_contact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFormModeNewContact();
-            }
-        });
+        button_new_contact.setOnClickListener(view -> openFormModeNewContact());
     }
 
 //  Method that open the FormContactActivity using the intent
@@ -111,8 +108,7 @@ public class ListContactActivity extends AppCompatActivity {
 
 //  Update all the info in our contact list, with the users removed/edited/created
     private void updateContactList() {
-        this.adapter.clear();
-        this.adapter.addAll(dao.allList());
+        adapter.update(dao.allList());
         adapter.notifyDataSetChanged();
     }
 
@@ -135,23 +131,19 @@ public class ListContactActivity extends AppCompatActivity {
 
 //  Method for editing on item in the List, after a right click with mouse
     private void configClickOnListItem(ListView lstContacts) {
-        lstContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view,
-                                    int position, long l) {
-                Contact contactChosen = (Contact) adapterView.getItemAtPosition(position);
-                openFormModeEditionContact(contactChosen);
-            }
+        lstContacts.setOnItemClickListener((adapterView, view, position, l) -> {
+            Contact contactChosen = (Contact) adapterView.getItemAtPosition(position);
+            openFormModeEditionContact(contactChosen);
         });
     }
 
 //  Start the FormContactActivity and send the contact to be edited as an extra
 //  in the intent
     private void openFormModeEditionContact(Contact contact) {
-        Intent openFormContactActiviy = new Intent(
+        Intent openFormContactActivity = new Intent(
                 ListContactActivity.this,FormContactActivity.class);
-        openFormContactActiviy.putExtra(CONTACT_KEY, contact);
-        startActivity(openFormContactActiviy);
+        openFormContactActivity.putExtra(CONTACT_KEY, contact);
+        startActivity(openFormContactActivity);
     }
 
 //  Creates the adapter handle

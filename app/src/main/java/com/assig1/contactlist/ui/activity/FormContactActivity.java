@@ -7,15 +7,12 @@
 package com.assig1.contactlist.ui.activity;
 
 import static com.assig1.contactlist.ui.activity.ListContactActivity.CONTACT_KEY;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,10 +20,9 @@ import com.assig1.contactlist.R;
 import com.assig1.contactlist.model.Contact;
 import com.assig1.contactlist.model.Contact_DAO;
 
-import java.io.Serializable;
 /*
 A class that is assigned to the Activity_form_Contact_XMl
-This is class is responsable to show, edit, and create new contacts
+This is class is responsible to show, edit, and create new contacts
  */
 public class FormContactActivity extends AppCompatActivity {
     /*
@@ -102,15 +98,13 @@ public class FormContactActivity extends AppCompatActivity {
 //  Configuring the save button at the end of the form
     private void saveButtonConfig() {
         Button save_button = findViewById(R.id.activity_form_contact_save_button);
-        save_button.setOnClickListener((view) -> {
-            finishForm();
-        });
+        save_button.setOnClickListener((view) -> finishForm());
     }
 
 //  When the finishForm is called the contact is saved and activity is finished
     private void finishForm() {
         fillContact();
-        if(contact.contacHasValidID())
+        if(contact.contactHasValidID())
             dao.edit(contact);
         else
             dao.save(contact);
