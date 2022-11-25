@@ -5,7 +5,14 @@
  */
 
 package com.assig1.contactlist.model;
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import com.assig1.contactlist.BitMapConverter;
+
 import java.io.Serializable;
 
 
@@ -13,25 +20,24 @@ import java.io.Serializable;
 A class that will have the information's necessary to create and handle a
 Contact for our contact list
  */
+@Entity
 public class Contact implements Serializable {
     private String name;
     private String phone;
     private String email;
+    @PrimaryKey(autoGenerate = true)
     private int ID = 0;
 
-    /*
-    The contact with have tree attributes that need to be set at creation
-    but can be changed after creation
-     */
-    public Contact(String name, String phone, String email) {
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
+    public byte[] getAvatarArray() {
+        return AvatarArray;
     }
 
-    public Contact() {
-
+    public void setAvatarArray(byte[] avatarArray) {
+        AvatarArray = avatarArray;
     }
+
+    private byte[] AvatarArray;
+
 
 //   Getter and Setters
     public int getID() {
@@ -75,4 +81,17 @@ public class Contact implements Serializable {
     public boolean contactHasValidID() {
         return ID > 0;
     }
+
+    public Bitmap getAvatar() {
+        byte[] a = getAvatarArray();
+        if (a == null)
+            return null;
+        return BitMapConverter.getBitmap(a);
+    }
+
+    public void setAvatar(Bitmap bitmap) {
+        setAvatarArray(BitMapConverter.getBytes(bitmap)); ;
+    }
+
+
 }

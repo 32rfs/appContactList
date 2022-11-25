@@ -3,5 +3,7 @@
 
     <item   android:id="@+id/activity_contact_list_menu_remover"
             android:title="@string/remove" />
+    <item   android:id="@+id/activity_contact_list_menu_call"
+        android:title="@string/Call" />
 
 </menu>

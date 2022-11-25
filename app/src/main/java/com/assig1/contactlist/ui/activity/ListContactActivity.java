@@ -6,20 +6,19 @@
 
 package com.assig1.contactlist.ui.activity;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.assig1.contactlist.R;
 import com.assig1.contactlist.model.Contact;
-import com.assig1.contactlist.model.Contact_DAO;
+import com.assig1.contactlist.ui.ListContactView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
@@ -34,8 +33,7 @@ public class ListContactActivity extends AppCompatActivity {
     public static final String CONTACT_KEY = "contact";
     public static final String TITLE_BAR = "Contact List";
 //  Handlers
-    private final Contact_DAO dao = new Contact_DAO();
-    private ContactListAdapter adapter;
+    private ListContactView contactListView;
 
     /*
     Create the view, setting a title and functions and auto creating a few
@@ -46,6 +44,7 @@ public class ListContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle(TITLE_BAR);
+        contactListView = new ListContactView(this);
         configButtonNewContact();
         configContactList();
 
@@ -64,26 +63,12 @@ public class ListContactActivity extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         int itemID = item.getItemId();
         if(itemID == R.id.activity_contact_list_menu_remover){
-            deletingConfirmation(item);
-        }
+            contactListView.deletingConfirmation(item);
+        } if (itemID == R.id.activity_contact_list_menu_call)
+            contactListView.callConfirmation(item);
         return super.onContextItemSelected(item);
     }
 
-    private void deletingConfirmation(final MenuItem item) {
-        new AlertDialog.Builder(this)
-                .setTitle("DELETE")
-                .setMessage("Remove the contact ?")
-                .setPositiveButton("YES", (dialogInterface, i) -> deleteAction(item))
-                .setNegativeButton("NO", null)
-                .show();
-    }
-
-    private void deleteAction(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo menuInfo =
-                (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Contact contactChosen = adapter.getItem(menuInfo.position);
-        remove(contactChosen);
-    }
 
     //  Configuring the floating button that is used to add a new form, for that it's
 //  called other activity
@@ -103,31 +88,20 @@ public class ListContactActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateContactList();
+        contactListView.updateContactList();
     }
 
-//  Update all the info in our contact list, with the users removed/edited/created
-    private void updateContactList() {
-        adapter.update(dao.allList());
-        adapter.notifyDataSetChanged();
-    }
+
 
 //  Configure the actions that you can do interacting with the ListView
     private void configContactList() {
         ListView lstContacts = findViewById(R.id.main_listContacts_listView);
-        configAdapter(lstContacts);
+        contactListView.configAdapter(lstContacts);
         configClickOnListItem(lstContacts);
         registerForContextMenu(lstContacts);
     }
 
 
-//  Method for removing one item of the ListView
-    private void remove(Contact contactChosen) {
-        dao.remove(contactChosen);
-        adapter.remove(contactChosen);
-        updateContactList();
-        Toasting("Contact Removed");
-    }
 
 //  Method for editing on item in the List, after a right click with mouse
     private void configClickOnListItem(ListView lstContacts) {
@@ -146,11 +120,7 @@ public class ListContactActivity extends AppCompatActivity {
         startActivity(openFormContactActivity);
     }
 
-//  Creates the adapter handle
-    private void configAdapter(ListView lstContacts) {
-        adapter = new ContactListAdapter(this);
-        lstContacts.setAdapter(adapter);
-    }
+
 
 /* The toasting method just show a message to the user in the screen, can be used
 to say the action was made with successful you can edit the message when calling*/
