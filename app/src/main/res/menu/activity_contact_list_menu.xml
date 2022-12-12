@@ -5,5 +5,7 @@
             android:title="@string/remove" />
     <item   android:id="@+id/activity_contact_list_menu_call"
         android:title="@string/Call" />
+    <item   android:id="@+id/activity_contact_list_menu_mail"
+        android:title="@string/mail" />
 
 </menu>

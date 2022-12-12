@@ -9,4 +9,5 @@
     <string name="Avatar">Change Picture Profile</string>
     <string name="Cancel">Cancel</string>
     <string name="Call">Call</string>
+    <string name="mail">Email</string>
 </resources>

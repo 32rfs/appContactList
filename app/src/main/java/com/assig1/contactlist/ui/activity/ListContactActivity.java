@@ -66,6 +66,8 @@ public class ListContactActivity extends AppCompatActivity {
             contactListView.deletingConfirmation(item);
         } if (itemID == R.id.activity_contact_list_menu_call)
             contactListView.callConfirmation(item);
+        if (itemID == R.id.activity_contact_list_menu_mail)
+            contactListView.mailConfirmation(item);
         return super.onContextItemSelected(item);
     }
 
